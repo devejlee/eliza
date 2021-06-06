@@ -286,22 +286,23 @@ continue_chat = True
 def synonyms(token):
     synsets = wn.synsets(token)
     for syn in synsets:
-        return syn.lemma_names()
+        syn_list = syn.lemma_names()
+        for word in syn_list:
+            if word in responses:
+                return word
 
 
 while continue_chat:
     unknown_words = []
     known_words = []
-    test = False
     # Check if there is a prepared response for each word user enters
     for word in set(user_input.split()):
         token = lemmatizer.lemmatize(word.lower().strip(string.punctuation))
-        for syn in synonyms(token):
-            if syn in responses:
-                known_words.append({"word": syn, "weight": responses[syn]["weight"]})
-                test = True
-            else:
-                unknown_words.append(syn)
+        if synonyms(token) is not None:
+            found_word = synonyms(token)
+            known_words.append({"word": found_word, "weight": responses[found_word]["weight"]})
+        else:
+            unknown_words.append(token)
     # Debugging
     print('used_tokens:', sorted(known_words, key=lambda item: item['weight']))
     print('unused_tokens:', unknown_words)
