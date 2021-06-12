@@ -169,7 +169,7 @@ responses = {
     },
     "perhaps": {
         "weight": 31,
-        "responses": ["How do you know you can't \"*\"?", "Perhaps you could * if you tried.",
+        "responses": ["How do you know you can't *?", "Perhaps you could * if you tried.",
                       "What would it take for you to *?"]
     },
     "remember": {
@@ -305,10 +305,14 @@ def pos(all_words, unknown_words):
         if pos[0] in unknown_words:
             pos_list.append(pos)
     print('pos_list', pos_list)
-    for word in pos_list:
-        if word[1] == 'NN':
-            return word
-
+    if len(pos_list) > 0:
+        for word in pos_list:
+            if word[1] == 'NN':
+                return word
+            else:
+                return 'x2'
+    else:
+        return 'z2'
 
 while continue_chat:
     all_words = []
@@ -328,20 +332,26 @@ while continue_chat:
             known_words.append({"word": found_word, "weight": responses[found_word]["weight"]})
         else:
             unknown_words.append(clean_word)
-    # Store replacement word
-    replace_word = pos(all_words, unknown_words)[0]
-    print('replace_word', replace_word)
     # Debugging
     print('known_words:', sorted(known_words, key=lambda item: item['weight']))
     print('unknown_words:', unknown_words)
+    # Store replacement word
+    replace_word = pos(all_words, unknown_words)[0]
     # Respond with the highest weight response. If there is no prepared response, end chat.
     if len(known_words) > 0:
         highest_weight = sorted(known_words, key=lambda item: item['weight'])[-1]["word"]
         response = random.choice(list(responses[highest_weight]["responses"]))
-        # Replace * with replacement word
-        print(re.sub(r'\*', replace_word, response))
+        # Replace * with replacement word if * is in response
+        if re.search(r'\*', response):
+            print(re.sub(r'\*', replace_word, response))
+        else:
+            print(response)
         user_input = input('ELIZA: Talk to me again: ')
     else:
         continue_chat = False
 
 print("ELIZA: " + random.choice(end_chat) + ' ')
+
+# TODO
+# If user inputs a short response like "perhaps" then unknown_words is []
+# hypernyms hyponyms?
