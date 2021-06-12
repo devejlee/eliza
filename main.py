@@ -2,10 +2,16 @@ import nltk
 import random
 import string
 from nltk.corpus import wordnet as wn
+from nltk import pos_tag
+import re
 
 lemmatizer = nltk.stem.WordNetLemmatizer()
 
 responses = {
+    "test": {
+        "weight": -1,
+        "responses": ["This is a test *."]
+    },
     "NOTFOUND": {
         "weight": 0,
         "responses": [
@@ -292,24 +298,48 @@ def synonyms(token):
                 return word
 
 
+# replace * in responses with unused words
+def pos(all_words, unknown_words):
+    pos_list = []
+    for pos in pos_tag(all_words):
+        if pos[0] in unknown_words:
+            pos_list.append(pos)
+    print('pos_list', pos_list)
+    for word in pos_list:
+        if word[1] == 'NN':
+            return word
+
+
 while continue_chat:
+    all_words = []
     unknown_words = []
     known_words = []
     # Check if there is a prepared response for each word user enters
     for word in set(user_input.split()):
-        token = lemmatizer.lemmatize(word.lower().strip(string.punctuation))
-        if synonyms(token) is not None:
+        clean_word = word.lower().strip(string.punctuation)
+        all_words.append(clean_word)
+        token = lemmatizer.lemmatize(clean_word)
+        # For words like "you" that have no synonyms but are in responses
+        if token in responses and synonyms(token) is None:
+            known_words.append({"word": token, "weight": responses[token]["weight"]})
+        # For words like "mommmy" that have a synonym of "mom" in responses
+        elif synonyms(token) is not None:
             found_word = synonyms(token)
             known_words.append({"word": found_word, "weight": responses[found_word]["weight"]})
         else:
-            unknown_words.append(token)
+            unknown_words.append(clean_word)
+    # Store replacement word
+    replace_word = pos(all_words, unknown_words)[0]
+    print('replace_word', replace_word)
     # Debugging
-    print('used_tokens:', sorted(known_words, key=lambda item: item['weight']))
-    print('unused_tokens:', unknown_words)
+    print('known_words:', sorted(known_words, key=lambda item: item['weight']))
+    print('unknown_words:', unknown_words)
     # Respond with the highest weight response. If there is no prepared response, end chat.
     if len(known_words) > 0:
         highest_weight = sorted(known_words, key=lambda item: item['weight'])[-1]["word"]
-        print(random.choice(list(responses[highest_weight]["responses"])))
+        response = random.choice(list(responses[highest_weight]["responses"]))
+        # Replace * with replacement word
+        print(re.sub(r'\*', replace_word, response))
         user_input = input('ELIZA: Talk to me again: ')
     else:
         continue_chat = False
