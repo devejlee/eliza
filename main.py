@@ -24,7 +24,7 @@ responses = {
             "Please tell me more.",
             "Let's change focus a bit... Tell me about your family.",
             "Can you elaborate on that?",
-            "Why do you say that *?"
+            "Why do you say that?"
         ]
     },
     "sorry": {
@@ -202,33 +202,6 @@ responses = {
     }
 }
 
-# List of special case
-# "i am *1-3* happy" -> "i am happy"
-# Ex.
-# User> I am extremely happy
-# this becomes "I am happy"
-# Eliza> Why are you happy?
-# Ex.
-# User> I am sad because i wish i was happy
-# This is changed because the 1-3 represents this
-# is valid if there is 1 to 3 words between "am" and
-# "happy"
-
-responsesWithWildcard = {
-    "i am *1-3* happy": {
-        "weight": 20,
-        "replacementWord": "i am happy"
-    },
-    "i am *1-3* sad": {
-        "weight": 20,
-        "replacementWord": "i am sad"
-    },
-    "i am *1-3* bored": {
-        "weight": 20,
-        "replacementWord": "i am bored"
-    }
-}
-
 start_chat = ["Hello. How are you feeling today?",
               "Hi there, welcome to my office. I'm here to chat about anything. What's on your mind?",
               "How do you do. Please tell me your problem.", "Please tell me what's been bothering you.",
@@ -240,7 +213,7 @@ user_input = input("ELIZA: " + random.choice(start_chat) + ' ')
 continue_chat = True
 
 
-# check synonyms of user input
+# check if a synonym is in responses
 def synonyms(token):
     synsets = wn.synsets(token)
     for syn in synsets:
@@ -260,35 +233,39 @@ def pos(all_words, unknown_words):
     if len(pos_list) > 0:
         for word in pos_list:
             if word[1] == 'NN':
-                return word
+                return word[0]
+            # skip to next word until condition is met
             else:
-                return 'x2'
+                continue
     else:
-        return 'z2'
+        return ''
+
 
 while continue_chat:
     all_words = []
     unknown_words = []
     known_words = []
-    # Check if there is a prepared response for each word user enters
+    # Check if there is a prepared response for each unique word user enters
     for word in set(user_input.split()):
         clean_word = word.lower().strip(string.punctuation)
         all_words.append(clean_word)
         token = lemmatizer.lemmatize(clean_word)
         # For words like "you" that have no synonyms but are in responses
-        if token in responses and synonyms(token) is None:
+        if token in responses and len(wn.synsets(token)) == 0:
             known_words.append({"word": token, "weight": responses[token]["weight"]})
         # For words like "mommmy" that have a synonym of "mom" in responses
         elif synonyms(token) is not None:
             found_word = synonyms(token)
             known_words.append({"word": found_word, "weight": responses[found_word]["weight"]})
+        # For words like "walmart" that have no synonyms and are not in responses
         else:
             unknown_words.append(clean_word)
     # Debugging
     print('known_words:', sorted(known_words, key=lambda item: item['weight']))
     print('unknown_words:', unknown_words)
     # Store replacement word
-    replace_word = pos(all_words, unknown_words)[0]
+    replace_word = pos(all_words, unknown_words)
+    print('replace_word:', replace_word)
     # Respond with the highest weight response. If there is no prepared response, end chat.
     if len(known_words) > 0:
         highest_weight = sorted(known_words, key=lambda item: item['weight'])[-1]["word"]
