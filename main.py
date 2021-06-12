@@ -10,7 +10,8 @@ lemmatizer = nltk.stem.WordNetLemmatizer()
 responses = {
     "test": {
         "weight": -1,
-        "responses": ["This is a test *."]
+        "responses": ["This is a test *."],
+        "pos": "NN"
     },
     "NOTFOUND": {
         "weight": 0,
@@ -65,10 +66,9 @@ responses = {
                       "Do you believe it is normal to be *?", "Do you enjoy being *?",
                       "Did you come to me because you are *?"]
     },
-    "i feel": {
+    "feel": {
         "weight": 10,
-        "responses": ["Tell me more about such feelings.", "Do you often feel *?", "Do you enjoy feeling *?",
-                      "Why do you feel that way?"]
+        "responses": ["Tell me more about such feelings."]
     },
     "family": {
         "weight": 11,
@@ -77,28 +77,23 @@ responses = {
     },
     "mother": {
         "weight": 12,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your mother."]
     },
     "father": {
         "weight": 13,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your father."]
     },
     "mom": {
         "weight": 14,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your mom."]
     },
     "sister": {
         "weight": 15,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your sister."]
     },
     "brother": {
         "weight": 16,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your brother."]
     },
     "husband": {
         "weight": 17,
@@ -107,8 +102,7 @@ responses = {
     },
     "wife": {
         "weight": 18,
-        "responses": ["Tell me more about your family.", "How do you get along with your family?",
-                      "Is your family important to you?"]
+        "responses": ["Tell me more about your husband."]
     },
     "child": {
         "weight": 19,
@@ -117,7 +111,7 @@ responses = {
                       "Did the other children sometimes tease you?",
                       "How do you think your childhood experiences relate to your feelings today?"]
     },
-    "dreamed": {
+    "dream": {
         "weight": 20,
         "responses": ["What does that dream suggest to you?", "Do you dream often?",
                       "What people appear in your dreams?", "Are you disturbed by your dreams?",
@@ -125,52 +119,41 @@ responses = {
     },
     "nightmare": {
         "weight": 21,
-        "responses": ["What does that dream suggest to you?", "Do you dream often?",
-                      "What persons appear in your dreams?", "Are you disturbed by your dreams?"]
+        "responses": ["What does that nightmare suggest to you?"]
     },
     "hello": {
         "weight": 22,
-        "responses": ["Hi again! How is going?", "How are you today? Any problems?"]
+        "responses": ["Hello, how is it going?", "How are you today? Any problems?"]
     },
-    "good afternoon": {
+    "afternoon": {
         "weight": 23,
-        "responses": ["Hi again! How is going?", "How are you today? Any problems?"]
+        "responses": ["Afternoon!"]
     },
-    "good morning": {
+    "morning": {
         "weight": 24,
-        "responses": ["Hi again! How is going?", "How are you today? Any problems?"]
+        "responses": ["And a good morning to you too!"]
     },
     "hi": {
         "weight": 25,
-        "responses": ["Hi again! How is going?", "How are you today? Any problems?"]
+        "responses": ["Hi, how is it going?"]
     },
     "goodbye": {
         "weight": 26,
-        "responses": ["Goodbye.  Thank you for talking to me."]
+        "responses": ["Goodbye. Thank you for talking to me."]
     },
-    "i need": {
+    "need": {
         "weight": 27,
         "responses": ["Why do you need *?", "Would it really help you to get *?", "Are you sure you need *?"]
     },
-    "why don\'t you": {
+    "don't": {
         "weight": 28,
         "responses": ["Do you really think I don't *?", "Perhaps eventually I will *.",
                       "Do you really want me to *?"]
     },
-    "why can\'t i": {
+    "can't": {
         "weight": 29,
         "responses": ["Do you think you should be able to *?", "If you could *, what would you do?",
                       "I don't know -- why can't you *?", "Have you really tried?"]
-    },
-    "i can\'t": {
-        "weight": 30,
-        "responses": ["How do you know you can't \"*\"?", "Perhaps you could * if you tried.",
-                      "What would it take for you to *?"]
-    },
-    "perhaps": {
-        "weight": 31,
-        "responses": ["How do you know you can't *?", "Perhaps you could * if you tried.",
-                      "What would it take for you to *?"]
     },
     "remember": {
         "weight": 32,
@@ -178,36 +161,18 @@ responses = {
                       "What else do you recollect?", "Why do you recollect * just now?",
                       "What in the present situation reminds you of *?", "What is the connection between me and *?"]
     },
-    "do you remember": {
-        "weight": 33,
-        "responses": ["Do you think I would forget?", "Yes I do remember *."]
-    },
-    "if": {
-        "weight": 34,
-        "responses": ["Do you think it\'s likely that *?", "Do you wish that *?", "What do you know about *?",
-                      "Really, if *?"]
-    },
     "name": {
         "weight": 35,
         "responses": ["I am not interested in names.",
                       "I\'ve told you before, I do not care about names -- please continue."]
-    },
-    "another language": {
-        "weight": 36,
-        "responses": ["I told you before, I don't understand languages that are not English."]
     },
     "computer": {
         "weight": 37,
         "responses": ["Do computers worry you?", "Why do you mention computers?",
                       "Could you expand on how computers and * are related?",
                       "What do you think machines have to do with your problem?",
-                      "Don't you think computers can help people?", "What about machines worrys you?",
+                      "Don't you think computers can help people?", "What about machines worries you?",
                       "What do you think about machines?"]
-    },
-    "are you": {
-        "weight": 38,
-        "responses": ["Why are you interested in whether I am * or not?", "Would you prefer if I weren't *?",
-                      "Perhaps I am * in your fantasies.", "Do you sometimes think I am *?"]
     },
     "are": {
         "weight": 39,
@@ -219,32 +184,19 @@ responses = {
         "responses": ["Why are you concerned over my *?", "What about your own *?",
                       "Are you worried about someone else's *?", "Really, my *?"]
     },
-    "was i": {
+    "was": {
         "weight": 41,
-        "responses": ["What if you were *?", "Do you think you were *?", "Were you *?",
-                      "What would it mean if you were *?", "What does * suggest to you?"]
+        "responses": ["What does * suggest to you?"]
     },
-    "was you": {
-        "weight": 42,
-        "responses": ["Would you like to believe I was *?", "What suggests that I was *?", "What do you think?"]
-    },
-    "i desire": {
-        "weight": 43,
-        "responses": ["What would it mean to you if you got it?", "Why do you want it?", "What if you never got it?"]
-    },
-    "i desired": {
-        "weight": 44,
-        "responses": ["Did you achieve it or simply moved on?"]
-    },
-    "i am sad": {
+    "sad": {
         "weight": 45,
-        "responses": ["Sorry to hear you are. Tell me about it."]
+        "responses": ["Sorry to hear you are sad. Tell me about it."]
     },
-    "i am happy": {
+    "happy": {
         "weight": 46,
-        "responses": ["That's good. What is making you happy?"]
+        "responses": ["What is making you happy?"]
     },
-    "i am bored": {
+    "bored": {
         "weight": 47,
         "responses": ["What makes you bored?"]
     }
