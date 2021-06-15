@@ -227,11 +227,14 @@ def synonyms(token):
 def pos(all_words, unknown_words):
     pos_list = []
     for pos in pos_tag(all_words):
-        if pos[0] in unknown_words:
-            pos_list.append(pos)
+        pos_list.append(pos)
+        # if pos[0] in unknown_words:
+        #     pos_list.append(pos)
     print('pos_list', pos_list)
+    chunking(pos_list)
     if len(pos_list) > 0:
         for word in pos_list:
+            # ex: ('miss', 'NN') returns 'miss'
             if word[1] == 'NN':
                 return word[0]
             # skip to next word until condition is met
@@ -241,12 +244,33 @@ def pos(all_words, unknown_words):
         return ''
 
 
+def chunking(sentence):
+    grammar = """NP: {<DT>?<JJ>*<NN>}
+    VBD: {<VBD>}
+    IN: {<IN>}"""
+    NPchunker = nltk.RegexpParser(grammar)
+    result = NPchunker.parse(sentence)
+    print(list(traverse_tree(result, 2)))
+
+
+def traverse_tree(tree, depth=float('inf')):
+    """
+    Traversing the Tree depth-first,
+    yield leaves up to `depth` level.
+    """
+    for subtree in tree:
+        if type(subtree) == nltk.tree.Tree:
+            if subtree.height() <= depth:
+                yield subtree.leaves()
+                traverse_tree(subtree)
+
+
 while continue_chat:
     all_words = []
     unknown_words = []
     known_words = []
     # Check if there is a prepared response for each unique word user enters
-    for word in set(user_input.split()):
+    for word in user_input.split():
         clean_word = word.lower().strip(string.punctuation)
         all_words.append(clean_word)
         token = lemmatizer.lemmatize(clean_word)
