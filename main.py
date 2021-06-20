@@ -8,11 +8,6 @@ import re
 lemmatizer = nltk.stem.WordNetLemmatizer()
 
 responses = {
-    "test": {
-        "weight": -1,
-        "responses": ["This is a test *."],
-        "pos": "NN"
-    },
     "NOTFOUND": {
         "weight": 0,
         "responses": [
@@ -49,8 +44,8 @@ responses = {
     },
     "you": {
         "weight": 6,
-        "responses": ["We were discussing you, not me.", "Why do you say that about me?",
-                      "Why do you care whether I \"*\"?"]
+        "responses": ["Why do you care whether I *?"],
+        "grammar": "VB"
     },
     "yes": {
         "weight": 7,
@@ -224,33 +219,37 @@ def synonyms(token):
 
 
 # replace * in responses with unused words
-def pos(all_words, unknown_words):
+def pos(all_words):
     pos_list = []
     for pos in pos_tag(all_words):
         pos_list.append(pos)
-        # if pos[0] in unknown_words:
-        #     pos_list.append(pos)
     print('pos_list', pos_list)
+    # If known_words is not empty and the last known_word has a grammar
+    if len(known_words) > 0 and "grammar" in sorted(known_words, key=lambda item: item['weight'])[-1]:
+        grammar = sorted(known_words, key=lambda item: item['weight'])[-1]["grammar"]
+    else:
+        grammar = ''
     chunking(pos_list)
     if len(pos_list) > 0:
         for word in pos_list:
-            # ex: ('miss', 'NN') returns 'miss'
-            if word[1] == 'NN':
+            # ex: pos_list [('you', 'PRP'), ('think', 'VBP')] and "you" in responses has a grammar key of "VB"
+            if grammar in word[1] != '':
+                print('grammar:', grammar)
+                # if there is no grammar key in any word[1], the first word is returned. Why?
                 return word[0]
-            # skip to next word until condition is met
-            else:
-                continue
     else:
         return ''
 
 
+# organize user input into noun phrases
 def chunking(sentence):
     grammar = """NP: {<DT>?<JJ>*<NN>}
     VBD: {<VBD>}
     IN: {<IN>}"""
     NPchunker = nltk.RegexpParser(grammar)
     result = NPchunker.parse(sentence)
-    print(list(traverse_tree(result, 2)))
+    print("chunking", list(traverse_tree(result, 2)))
+    return list(traverse_tree(result, 2))
 
 
 def traverse_tree(tree, depth=float('inf')):
@@ -271,12 +270,20 @@ while continue_chat:
     known_words = []
     # Check if there is a prepared response for each unique word user enters
     for word in user_input.split():
+        # make every user input word lowercase and delete all punctuation
         clean_word = word.lower().strip(string.punctuation)
         all_words.append(clean_word)
-        token = lemmatizer.lemmatize(clean_word)
+        # lemmatizer requires the correct POS tag, the default tag is noun
+        # token = lemmatizer.lemmatize(clean_word)
+        token = clean_word
         # For words like "you" that have no synonyms but are in responses
         if token in responses and len(wn.synsets(token)) == 0:
-            known_words.append({"word": token, "weight": responses[token]["weight"]})
+            # For words in responses that have a grammar key
+            if "grammar" in responses[token]:
+                known_words.append({"word": token, "weight": responses[token]["weight"], "grammar": responses[token]["grammar"]})
+            # For words in responses that don't have a grammar key
+            else:
+                known_words.append({"word": token, "weight": responses[token]["weight"]})
         # For words like "mommmy" that have a synonym of "mom" in responses
         elif synonyms(token) is not None:
             found_word = synonyms(token)
@@ -288,7 +295,7 @@ while continue_chat:
     print('known_words:', sorted(known_words, key=lambda item: item['weight']))
     print('unknown_words:', unknown_words)
     # Store replacement word
-    replace_word = pos(all_words, unknown_words)
+    replace_word = pos(all_words)
     print('replace_word:', replace_word)
     # Respond with the highest weight response. If there is no prepared response, end chat.
     if len(known_words) > 0:
@@ -306,5 +313,6 @@ while continue_chat:
 print("ELIZA: " + random.choice(end_chat) + ' ')
 
 # TODO
-# If user inputs a short response like "perhaps" then unknown_words is []
+# lemmatizer does not work
+# do I even need the chunking function?
 # hypernyms hyponyms?
