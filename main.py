@@ -8,6 +8,11 @@ import re
 lemmatizer = nltk.stem.WordNetLemmatizer()
 
 responses = {
+    "him": {
+        "weight": 0,
+        "grammar": "VB",
+        "responses": ["This is a test *"]
+    },
     "NOTFOUND": {
         "weight": 0,
         "responses": [
@@ -47,6 +52,7 @@ responses = {
         "responses": ["Why do you care whether I *?"],
         "grammar": "VB"
     },
+    # "Yeah" ends the chat
     "yes": {
         "weight": 7,
         "responses": ["Why do you think so?", "You seem quite positive."]
@@ -55,6 +61,7 @@ responses = {
         "weight": 8,
         "responses": ["Why not?", "Are you sure?"]
     },
+    # "I am" ends the chat
     "am": {
         "weight": 9,
         "responses": ["I am sorry to hear you are *.", "How long have you been *?",
@@ -138,7 +145,8 @@ responses = {
     },
     "need": {
         "weight": 27,
-        "responses": ["Why do you need *?", "Would it really help you to get *?", "Are you sure you need *?"]
+        "responses": ["Why do you need *?", "Would it really help you to get *?", "Are you sure you need *?"],
+        "grammar": "NN"
     },
     "don't": {
         "weight": 28,
@@ -227,6 +235,7 @@ def pos(all_words):
     # If known_words is not empty and the last known_word has a grammar
     if len(known_words) > 0 and "grammar" in sorted(known_words, key=lambda item: item['weight'])[-1]:
         grammar = sorted(known_words, key=lambda item: item['weight'])[-1]["grammar"]
+        print('grammar', grammar)
     else:
         grammar = ''
     chunking(pos_list)
@@ -234,9 +243,13 @@ def pos(all_words):
         for word in pos_list:
             # ex: pos_list [('you', 'PRP'), ('think', 'VBP')] and "you" in responses has a grammar key of "VB"
             if grammar in word[1] != '':
+                print('word[1]', word[1])
                 print('grammar:', grammar)
                 # if there is no grammar key in any word[1], the first word is returned. Why?
                 return word[0]
+            else:
+                # input "you" has grammar of "VB" and pos_list [('you', 'PRP')]. "VB" is not in "PRP"
+                return 'NOT_FOUND'
     else:
         return ''
 
@@ -301,8 +314,12 @@ while continue_chat:
     if len(known_words) > 0:
         highest_weight = sorted(known_words, key=lambda item: item['weight'])[-1]["word"]
         response = random.choice(list(responses[highest_weight]["responses"]))
+        # If replace_word is not found
+        if replace_word == "NOT_FOUND":
+            response = random.choice(list(responses["NOTFOUND"]["responses"]))
+            print('random response', response)
         # Replace * with replacement word if * is in response
-        if re.search(r'\*', response):
+        elif re.search(r'\*', response):
             print(re.sub(r'\*', replace_word, response))
         else:
             print(response)
