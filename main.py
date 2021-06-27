@@ -250,10 +250,10 @@ def pos(all_words):
             else:
                 # keep looking for matching response grammar key
                 continue
-        # if matching response grammar key does not exist, return 'NOT_FOUND'
-        return 'NOT_FOUND'
+        # if matching response grammar key does not exist at all, return 'that'
+        return 'that'
     else:
-        return ''
+        return 'NOT_FOUND'
 
 
 # organize user input into noun phrases
