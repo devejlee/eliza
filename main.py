@@ -235,21 +235,23 @@ def pos(all_words):
     # If known_words is not empty and the last known_word has a grammar
     if len(known_words) > 0 and "grammar" in sorted(known_words, key=lambda item: item['weight'])[-1]:
         grammar = sorted(known_words, key=lambda item: item['weight'])[-1]["grammar"]
-        print('grammar', grammar)
+        print('grammar in known_words:', grammar)
     else:
         grammar = ''
     chunking(pos_list)
     if len(pos_list) > 0:
         for word in pos_list:
             # ex: pos_list [('you', 'PRP'), ('think', 'VBP')] and "you" in responses has a grammar key of "VB"
-            if grammar in word[1] != '':
+            if grammar in word[1] and grammar != '' and word[0] != 'i':
                 print('word[1]', word[1])
                 print('grammar:', grammar)
                 # if there is no grammar key in any word[1], the first word is returned. Why?
                 return word[0]
             else:
-                # input "you" has grammar of "VB" and pos_list [('you', 'PRP')]. "VB" is not in "PRP"
-                return 'NOT_FOUND'
+                # keep looking for matching response grammar key
+                continue
+        # if matching response grammar key does not exist, return 'NOT_FOUND'
+        return 'NOT_FOUND'
     else:
         return ''
 
@@ -305,6 +307,7 @@ while continue_chat:
         else:
             unknown_words.append(clean_word)
     # Debugging
+    print('all_words:', all_words)
     print('known_words:', sorted(known_words, key=lambda item: item['weight']))
     print('unknown_words:', unknown_words)
     # Store replacement word
@@ -330,6 +333,7 @@ while continue_chat:
 print("ELIZA: " + random.choice(end_chat) + ' ')
 
 # TODO
+# "dogs need" vs "need dogs" why is grammar ''? line 236 --> should try unknown_words
+# "I need that" --> "Are you sure you need i?". Maybe use chunking function to solve this?
 # lemmatizer does not work
-# do I even need the chunking function?
 # hypernyms hyponyms?
