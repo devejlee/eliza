@@ -232,10 +232,12 @@ def pos(all_words):
     for pos in pos_tag(all_words):
         pos_list.append(pos)
     print('pos_list', pos_list)
+    grammar_exists = False
     # If known_words is not empty and the last known_word has a grammar
     if len(known_words) > 0 and "grammar" in sorted(known_words, key=lambda item: item['weight'])[-1]:
         grammar = sorted(known_words, key=lambda item: item['weight'])[-1]["grammar"]
         print('grammar in known_words:', grammar)
+        grammar_exists = True
     else:
         grammar = ''
     chunking(pos_list)
@@ -250,8 +252,12 @@ def pos(all_words):
             else:
                 # keep looking for matching response grammar key
                 continue
-        # if matching response grammar key does not exist at all, return 'that'
-        return 'that'
+        # if matching response grammar key does exist, return 'NOT_FOUND'. Ex) "you"
+        if grammar_exists:
+            return 'NOT_FOUND'
+        # if matching response grammar key does not exist, return 'X'. Ex) "mother"
+        else:
+            return 'X'
     else:
         return 'NOT_FOUND'
 
@@ -333,7 +339,7 @@ while continue_chat:
 print("ELIZA: " + random.choice(end_chat) + ' ')
 
 # TODO
-# "dogs need" vs "need dogs" why is grammar ''? line 236 --> should try unknown_words
-# "I need that" --> "Are you sure you need i?". Maybe use chunking function to solve this?
+# add grammars for all * responses
 # lemmatizer does not work
 # hypernyms hyponyms?
+# do I even need chunking?
