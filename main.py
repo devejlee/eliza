@@ -66,7 +66,8 @@ responses = {
         "weight": 9,
         "responses": ["I am sorry to hear you are *.", "How long have you been *?",
                       "Do you believe it is normal to be *?", "Do you enjoy being *?",
-                      "Did you come to me because you are *?"]
+                      "Did you come to me because you are *?"],
+        "grammar": "JJ"
     },
     "feel": {
         "weight": 10,
@@ -151,18 +152,21 @@ responses = {
     "don't": {
         "weight": 28,
         "responses": ["Do you really think I don't *?", "Perhaps eventually I will *.",
-                      "Do you really want me to *?"]
+                      "Do you really want me to *?"],
+        "grammar": "VB"
     },
     "can't": {
         "weight": 29,
         "responses": ["Do you think you should be able to *?", "If you could *, what would you do?",
-                      "I don't know -- why can't you *?", "Have you really tried?"]
+                      "I don't know -- why can't you *?", "Have you really tried?"],
+        "grammar": "VB"
     },
     "remember": {
         "weight": 32,
         "responses": ["Do you often think of *?", "Does thinking of * bring anything else to mind",
                       "What else do you recollect?", "Why do you recollect * just now?",
-                      "What in the present situation reminds you of *?", "What is the connection between me and *?"]
+                      "What in the present situation reminds you of *?", "What is the connection between me and *?"],
+        "grammar": "NN"
     },
     "name": {
         "weight": 35,
@@ -175,17 +179,20 @@ responses = {
                       "Could you expand on how computers and * are related?",
                       "What do you think machines have to do with your problem?",
                       "Don't you think computers can help people?", "What about machines worries you?",
-                      "What do you think about machines?"]
+                      "What do you think about machines?"],
+        "grammar": "NN"
     },
     "are": {
         "weight": 39,
         "responses": ["Did you think they might not be *?", "Would you like it if they were not *?",
-                      "What if they were not *?", "Possibly they are *."]
+                      "What if they were not *?", "Possibly they are *."],
+        "grammar": "JJ"
     },
     "your": {
         "weight": 40,
         "responses": ["Why are you concerned over my *?", "What about your own *?",
-                      "Are you worried about someone else's *?", "Really, my *?"]
+                      "Are you worried about someone else's *?", "Really, my *?"],
+        "grammar": "NN"
     },
     "was": {
         "weight": 41,
@@ -339,7 +346,7 @@ while continue_chat:
 print("ELIZA: " + random.choice(end_chat) + ' ')
 
 # TODO
-# add grammars for all * responses
+# test all grammar responses
 # lemmatizer does not work
 # hypernyms hyponyms?
 # do I even need chunking?
