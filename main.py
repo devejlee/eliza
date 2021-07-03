@@ -52,7 +52,6 @@ responses = {
         "responses": ["Why do you care whether I *?"],
         "grammar": "VB"
     },
-    # "Yeah" ends the chat
     "yes": {
         "weight": 7,
         "responses": ["Why do you think so?", "You seem quite positive."]
@@ -61,7 +60,6 @@ responses = {
         "weight": 8,
         "responses": ["Why not?", "Are you sure?"]
     },
-    # "I am" ends the chat
     "am": {
         "weight": 9,
         "responses": ["I am sorry to hear you are *.", "How long have you been *?",
@@ -105,7 +103,7 @@ responses = {
     },
     "wife": {
         "weight": 18,
-        "responses": ["Tell me more about your husband."]
+        "responses": ["Tell me more about your wife."]
     },
     "child": {
         "weight": 19,
@@ -196,7 +194,8 @@ responses = {
     },
     "was": {
         "weight": 41,
-        "responses": ["What does * suggest to you?"]
+        "responses": ["What does * suggest to you?"],
+        "grammar": "JJ"
     },
     "sad": {
         "weight": 45,
@@ -305,7 +304,7 @@ while continue_chat:
         # token = lemmatizer.lemmatize(clean_word)
         token = clean_word
         # For words like "you" that have no synonyms but are in responses
-        if token in responses and len(wn.synsets(token)) == 0:
+        if token in responses:
             # For words in responses that have a grammar key
             if "grammar" in responses[token]:
                 known_words.append({"word": token, "weight": responses[token]["weight"], "grammar": responses[token]["grammar"]})
@@ -346,7 +345,7 @@ while continue_chat:
 print("ELIZA: " + random.choice(end_chat) + ' ')
 
 # TODO
-# test all grammar responses
+# debug "I can't be sure"
 # lemmatizer does not work
 # hypernyms hyponyms?
 # do I even need chunking?
