@@ -341,10 +341,10 @@ def test(user_input):
                 print(response)
                 return response
             # user_input = input('ELIZA: Talk to me again: ')
-            return 'uhoh'
         else:
             continue_chat = False
     print("ELIZA: " + random.choice(end_chat) + ' ')
+    return "ELIZA: " + random.choice(end_chat) + ' '
 
 # TODO
 # debug "I can't be sure"
