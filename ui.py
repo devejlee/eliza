@@ -4,13 +4,15 @@ from main import start_chat, test
 
 app = Flask(__name__)
 
+chat_log = []
 
 @app.route("/", methods=["POST", "GET"])
-
 def home():
     if request.method == "POST":
         posted = test(request.form["user"])
-        return render_template("index.html", start_chat="ELIZA: " + random.choice(start_chat), posted=posted)
+        chat_log.append(request.form["user"])
+        chat_log.append(posted)
+        return render_template("index.html", chat_log=chat_log)
     else:
         return render_template("index.html", start_chat="ELIZA: " + random.choice(start_chat))
 

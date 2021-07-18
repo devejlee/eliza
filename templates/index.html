@@ -5,12 +5,13 @@
 </head>
     <body>
         <p>{{start_chat}}</p>
+        {% for chat in chat_log %}
+        <p>{{ chat }}</p>
+        {% endfor %}
         <form action="#" method="post">
-            <p>User</p>
+            <span>User</span>
             <input type="text" name="user"/>
             <input type="submit" value="Enter"/>
         </form>
-        <p>{{posted}}</p>
-        <p>{{test}}</p>
     </body>
 </html>
