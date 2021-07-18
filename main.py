@@ -11,7 +11,7 @@ start_chat = ["Hello. How are you feeling today?",
               "Is something troubling you?", "Hello. How are you doing today?"]
 
 
-def test(user_input):
+def chat(user_input):
     lemmatizer = nltk.stem.WordNetLemmatizer()
 
     responses = {
@@ -332,14 +332,14 @@ def test(user_input):
             if replace_word == "NOT_FOUND":
                 response = random.choice(list(responses["NOTFOUND"]["responses"]))
                 print('random response', response)
-                return response
+                return 'ELIZA: ' + response
             # Replace * with replacement word if * is in response
             elif re.search(r'\*', response):
                 print(re.sub(r'\*', replace_word, response))
-                return re.sub(r'\*', replace_word, response)
+                return 'ELIZA: ' + re.sub(r'\*', replace_word, response)
             else:
                 print(response)
-                return response
+                return 'ELIZA: ' + response
             # user_input = input('ELIZA: Talk to me again: ')
         else:
             continue_chat = False

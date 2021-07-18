@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 import random
-from main import start_chat, test
+from main import start_chat, chat
 
 app = Flask(__name__)
 
@@ -9,8 +9,8 @@ chat_log = []
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "POST":
-        posted = test(request.form["user"])
-        chat_log.append(request.form["user"])
+        posted = chat(request.form["user"])
+        chat_log.append('User: ' + request.form["user"])
         chat_log.append(posted)
         return render_template("index.html", chat_log=chat_log)
     else:
